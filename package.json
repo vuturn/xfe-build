@@ -1,0 +1,99 @@
+{
+  "_from": "git+ssh://git@github.com/zenglincient/infofe-build.git",
+  "_id": "infofe-build@1.0.0",
+  "_inBundle": false,
+  "_integrity": "",
+  "_location": "/infofe-build",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "git",
+    "raw": "git+ssh://git@github.com:zenglincient/infofe-build.git",
+    "rawSpec": "git+ssh://git@github.com:zenglincient/infofe-build.git",
+    "saveSpec": "git+ssh://git@github.com/zenglincient/infofe-build.git",
+    "fetchSpec": "ssh://git@github.com/zenglincient/infofe-build.git",
+    "gitCommittish": null
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "git+ssh://git@github.com/zenglincient/infofe-build.git#4585655dda1f8183744744a3aadd7648d4c83364",
+  "_spec": "git+ssh://git@github.com:zenglincient/infofe-build.git",
+  "_where": "C:\\Users\\Administrator\\Downloads\\important\\demo\\normal-project",
+  "author": {
+    "name": "zenglinxiang"
+  },
+  "bin": {
+    "infofe-build": "bin/infofe-build"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "add-asset-html-webpack-plugin": "^2.1.3",
+    "art-template": "^4.12.2",
+    "art-template-loader": "^1.4.3",
+    "autoprefixer": "^6.7.7",
+    "babel-core": "^6.24.0",
+    "babel-loader": "^7.0.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-runtime": "^6.26.0",
+    "chalk": "^2.3.0",
+    "clean-webpack-plugin": "^0.1.16",
+    "css-loader": "^0.28.0",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "file-loader": "^0.11.1",
+    "html-webpack-harddisk-plugin": "^0.2.0",
+    "import-glob-loader": "^1.1.0",
+    "imports-loader": "^0.7.1",
+    "ip": "^1.1.5",
+    "lowdb": "^1.0.0",
+    "node-sass": "^4.5.2",
+    "node.extend": "https://registry.npmjs.org/node.extend/-/node.extend-1.1.6.tgz",
+    "optimize-css-assets-webpack-plugin": "^1.3.0",
+    "path": "^0.12.7",
+    "postcss-loader": "^1.3.3",
+    "postcss-smart-import": "^0.6.10",
+    "precss": "^1.4.0",
+    "promise-polyfill": "^6.0.2",
+    "randomstring": "^1.1.5",
+    "readline-sync": "^1.4.9",
+    "replace": "^0.3.0",
+    "request-promise-native": "^1.0.5",
+    "sass-loader": "^6.0.3",
+    "shelljs": "^0.7.8",
+    "slash": "^1.0.0",
+    "style-loader": "^0.16.1",
+    "url-loader": "^0.5.8",
+    "vue-loader": "^13.7.0",
+    "vue-style-loader": "https://registry.npmjs.org/vue-style-loader/-/vue-style-loader-2.0.5.tgz",
+    "vue-template-compiler": "^2.5.13",
+    "webpack": "^4.16.5",
+    "webpack-build-notifier": "^0.1.27",
+    "webpack-bundle-analyzer": "^2.13.1",
+    "webpack-cli": "^3.0.3",
+    "webpack-dev-server": "^3.1.4",
+    "webpack-merge": "^4.1.0",
+    "webpack-notifier": "^1.6.0"
+  },
+  "deprecated": false,
+  "description": "build for infofe",
+  "directories": {
+    "bin": "./bin"
+  },
+  "engines": {
+    "node": ">=6.9.2"
+  },
+  "license": "ISC",
+  "main": "index.js",
+  "name": "infofe-build",
+  "scripts": {
+    "dev": "webpack-dev-server --progress --config build/webpack.dev.js --host 0.0.0.0",
+    "prod": "node build/update-deploy-tag.js && webpack --progress --config build/webpack.prod.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.0",
+  "devDependencies": {
+    "html-webpack-plugin": "^3.2.0"
+  }
+}

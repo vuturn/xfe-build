@@ -1,0 +1,73 @@
+#!/usr/bin/env node
+
+const shelljs = require('shelljs');
+const slash = require('slash');
+const argv = require('yargs').argv;
+const path = require('path');
+const chalk = require('chalk');
+const fs = require('fs');
+const low = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
+const pjson = require(path.join(__dirname, './../package.json'));
+
+// -v 或者 --verson 返回版本号
+if (argv.v || argv.verson) {
+    console.log(pjson.verson);
+    process.exit();
+}
+
+let projectPath = process.cwd();
+
+process.env.projectPath = slash(projectPath);
+process.env.infofeBuildPath = slash(path.join(__dirname, '../'));
+process.env.staticPublicProjectPath = argv.staticPublicProjectPath || '';
+if (argv.d) {
+    let webpackDevServerEntry;
+    let webpackDevServerRelativePath = 'webpack-dev-server/bin/webpack-dev-server.js';
+    let webpackDevConfigPath = path.resolve(__dirname, '../build/webpack.dev.js');
+    try {
+        webpackDevServerEntry = require.resolve(path.join(__dirname, '../node_modules/', webpackDevServerRelativePath));
+    } catch (e) {
+        console.log(
+            chalk.yellow(
+                '注意: 当前项目用的 infofe-build 可能不是通过 npm 全局安装, 请尽快使用全局安装的方式使用 infofe-build, 方便统一管理!'
+            )
+        );
+        webpackDevServerEntry = path.join(process.cwd(), '/node_modules/', webpackDevServerRelativePath);
+    }
+    const execResult = shelljs.exec(
+        `node --max_old_space_size=4096 ${slash(webpackDevServerEntry)} --progress --config ${(slash(webpackDevConfigPath))} --host 0.0.0.0`
+    )
+    execResult.code && process.exit(1);
+} else if (argv.p) {
+    
+    process.env.NODE_ENV = 'production'; // 通过 node 设置 NODE_ENV，可以屏蔽操作系统的差异
+    let webpackEntry;
+    let webpackRelativePath = 'webpack/bin/webpack.js';
+    let updateDeployTagPath = path.resolve(__dirname, '../build/update-deploy-tag.js');
+    let webpackProdConfigPath = path.resolve(__dirname, '../build/webpack.prod.js');
+    try {
+        webpackEntry = require.resolve(path.join(__dirname, '../node_modules/', webpackRelativePath));
+    } catch (e) {
+        console.log(
+            chalk.yellow(
+                '注意: 当前项目用的 infofe-build 可能不是通过 npm 全局安装, 请尽快使用全局安装的方式使用 mfex-build, 方便统一管理!'
+            )
+        );
+        webpackEntry = path.join(process.cwd(), '/node_modules/', webpackRelativePath);
+    }
+    
+    const execResult = shelljs.exec(
+        `node ${slash(
+            webpackEntry
+        )} --progress --config ${slash(webpackProdConfigPath)} --mode production`
+    )
+    
+    execResult.code && process.exit(1);
+} else {
+    console.log(
+        chalk.red(
+            '需要指定操作参数\n infofe-build -d\n参考文档：待补充'
+        )
+    )
+}
