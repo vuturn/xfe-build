@@ -1,31 +1,20 @@
 {
-  "_from": "git+ssh://git@github.com/zenglincient/infofe-build.git",
-  "_id": "infofe-build@1.0.0",
-  "_inBundle": false,
-  "_integrity": "",
-  "_location": "/infofe-build",
-  "_phantomChildren": {},
-  "_requested": {
-    "type": "git",
-    "raw": "git+ssh://git@github.com:zenglincient/infofe-build.git",
-    "rawSpec": "git+ssh://git@github.com:zenglincient/infofe-build.git",
-    "saveSpec": "git+ssh://git@github.com/zenglincient/infofe-build.git",
-    "fetchSpec": "ssh://git@github.com/zenglincient/infofe-build.git",
-    "gitCommittish": null
+  "name": "infofe-build",
+  "version": "1.0.0",
+  "description": "build for infofe",
+  "main": "index.js",
+  "directories": {
+    "bin": "./bin"
   },
-  "_requiredBy": [
-    "#USER"
-  ],
-  "_resolved": "git+ssh://git@github.com/zenglincient/infofe-build.git#4585655dda1f8183744744a3aadd7648d4c83364",
-  "_spec": "git+ssh://git@github.com:zenglincient/infofe-build.git",
-  "_where": "C:\\Users\\Administrator\\Downloads\\important\\demo\\normal-project",
-  "author": {
-    "name": "zenglinxiang"
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack-dev-server --progress --config build/webpack.dev.js --host 0.0.0.0",
+    "prod": "node build/update-deploy-tag.js && webpack --progress --config build/webpack.prod.js"
   },
-  "bin": {
-    "infofe-build": "bin/infofe-build"
+  "bin": "bin/infofe-build",
+  "engines": {
+    "node": ">=6.9.2"
   },
-  "bundleDependencies": false,
   "dependencies": {
     "add-asset-html-webpack-plugin": "^2.1.3",
     "art-template": "^4.12.2",
@@ -76,24 +65,9 @@
     "webpack-merge": "^4.1.0",
     "webpack-notifier": "^1.6.0"
   },
-  "deprecated": false,
-  "description": "build for infofe",
-  "directories": {
-    "bin": "./bin"
-  },
-  "engines": {
-    "node": ">=6.9.2"
-  },
-  "license": "ISC",
-  "main": "index.js",
-  "name": "infofe-build",
-  "scripts": {
-    "dev": "webpack-dev-server --progress --config build/webpack.dev.js --host 0.0.0.0",
-    "prod": "node build/update-deploy-tag.js && webpack --progress --config build/webpack.prod.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "version": "1.0.0",
   "devDependencies": {
     "html-webpack-plugin": "^3.2.0"
-  }
+  },
+  "author": "zenglinxiang",
+  "license": "ISC"
 }

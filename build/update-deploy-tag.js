@@ -1,6 +1,6 @@
 /**
  * 更新静态资源版本
- * @author Paco
+ * @author zenglinxiang
  */
 
 const path = require('path');
