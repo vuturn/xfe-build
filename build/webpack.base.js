@@ -24,7 +24,7 @@ let scssLoader = [{
     loader: 'postcss-loader',
     options: {
       sourceMap: true,
-      config: path.join(__dirname, 'postcss.config.js'),
+      config: path.join(process.env.infofeBuildPath, 'postcss.config.js'),
     }
   }, {
     loader: 'sass-loader',
@@ -37,14 +37,18 @@ let scssLoader = [{
         '"; $DEPLOY_TAG: "' +
         config.deployTag +
         '";',
-    }
+    },
+}, {
+    loader: 'import-glob-loader'
 }]
+
+console.log(scssLoader)
 
 let basePlugins = [
     // 暂时不使用 ModuleConcatenationPlugin 作用域提升插件, 因为会对 webpack dev 模式造成影响
     // new webpack.optimize.ModuleConcatenationPlugin(),
     new ExtractTextPlugin({
-        filename: buildConfig.outputNamingPattern === 'hash' ? '[name]-[contenthash:8].css' : '[name].css',
+        filename: buildConfig.outputNamingPattern === 'hash' ? '[name].css' : '[name].css',
         allChunks: true,
     }),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
@@ -94,10 +98,7 @@ if (buildConfig.entry.vendor) {
     basePlugins.push(new HtmlWebpackPlugin(html));
 });
 
-console.log(buildConfig.htmlWebpackPlugin)
-
 // basePlugins.push(new HtmlWebpackHarddiskPlugin());
-
 
 let babelLoaderOptions = {
     babelrc: false,
@@ -152,7 +153,34 @@ let baseWebpackConfig = {
             test: /\.(scss|css)$/,
             use: ExtractTextPlugin.extract({
                 fallback: 'style-loader',
-                use: [...scssLoader]
+                use: [{
+                    loader: 'css-loader',
+                    options: {
+                        url: false,
+                        sourceMap: true
+                    }
+                  }, {
+                    loader: 'postcss-loader',
+                    ident: 'postcss',
+                    options: {
+                        sourceMap: true,
+                        config: path.join(process.env.infofeBuildPath, 'postcss.config.js'),
+                    }
+                  }, {
+                    loader: 'sass-loader',
+                    options: {
+                        sourceMap: true,
+                        data: '$ASSETS_URL: "' +
+                            config.paths.assetsURLCSS +
+                            '"; $STATIC_FILES_HOST: "' +
+                            config.paths.staticFilesHost +
+                            '"; $DEPLOY_TAG: "' +
+                            config.deployTag +
+                            '";',
+                    },
+                }, {
+                    loader: 'import-glob-loader'
+                }]
             })
         }, {
             test: /\.art$/,
