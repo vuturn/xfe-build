@@ -3,6 +3,7 @@ process.noDeprecation = true;
 const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
 const extend = require('node.extend');
@@ -12,44 +13,18 @@ const buildConfig = config.buildConfig;
 let resolveModules = [path.join(__dirname, '../node_modules'), path.join(config.paths.projectPath, 'node_modules')];
 const excludeRegexStr = `node_modules`;
 const excludeRegex = new RegExp(excludeRegexStr);
+const POSTCSS = require('../postcss.config')
 
 
-let scssLoader = [{
-    loader: 'css-loader',
-    options: {
-      url: false,
-      sourceMap: true
-    }
-  }, {
-    loader: 'postcss-loader',
-    options: {
-      sourceMap: true,
-      config: path.join(process.env.infofeBuildPath, 'postcss.config.js'),
-    }
-  }, {
-    loader: 'sass-loader',
-    options: {
-      sourceMap: true,
-      data: '$ASSETS_URL: "' +
-        config.paths.assetsURLCSS +
-        '"; $STATIC_FILES_HOST: "' +
-        config.paths.staticFilesHost +
-        '"; $DEPLOY_TAG: "' +
-        config.deployTag +
-        '";',
-    },
-}, {
-    loader: 'import-glob-loader'
-}]
+let scssLoader = []
 
-console.log(scssLoader)
 
 let basePlugins = [
-    // 暂时不使用 ModuleConcatenationPlugin 作用域提升插件, 因为会对 webpack dev 模式造成影响
-    // new webpack.optimize.ModuleConcatenationPlugin(),
-    new ExtractTextPlugin({
+    new MiniCssExtractPlugin({
+        // Options similar to the same options in webpackOptions.output
+        // both options are optional
         filename: buildConfig.outputNamingPattern === 'hash' ? '[name].css' : '[name].css',
-        allChunks: true,
+        chunkFilename: "[id].css"
     }),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     new webpack.DefinePlugin({
@@ -151,37 +126,27 @@ let baseWebpackConfig = {
             }
         }, {
             test: /\.(scss|css)$/,
-            use: ExtractTextPlugin.extract({
-                fallback: 'style-loader',
-                use: [{
-                    loader: 'css-loader',
-                    options: {
-                        url: false,
-                        sourceMap: true
-                    }
-                  }, {
-                    loader: 'postcss-loader',
-                    ident: 'postcss',
-                    options: {
-                        sourceMap: true,
-                        config: path.join(process.env.infofeBuildPath, 'postcss.config.js'),
-                    }
-                  }, {
-                    loader: 'sass-loader',
-                    options: {
-                        sourceMap: true,
-                        data: '$ASSETS_URL: "' +
-                            config.paths.assetsURLCSS +
-                            '"; $STATIC_FILES_HOST: "' +
-                            config.paths.staticFilesHost +
-                            '"; $DEPLOY_TAG: "' +
-                            config.deployTag +
-                            '";',
-                    },
-                }, {
-                    loader: 'import-glob-loader'
-                }]
-            })
+            use: [MiniCssExtractPlugin.loader, {
+                loader: 'css-loader',
+                options: {
+                    url: false,
+                    sourceMap: true
+                }
+            }, {
+                loader: 'postcss-loader',
+                ident: 'postcss',
+                options: {
+                    sourceMap: true,
+                    plugins: POSTCSS.plugins,
+                }
+            },{
+                loader: 'sass-loader',
+                options: {
+                    sourceMap: true
+                },
+            }, {
+                loader: 'import-glob-loader'
+            }]
         }, {
             test: /\.art$/,
             use: [{
