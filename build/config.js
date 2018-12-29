@@ -43,11 +43,11 @@ let defaultBuildConfig = {
     dropConsole: true,  // 打包之后是否去掉 console.log
     staticPublicProjectPath: defaultStaticPublicProjectPath,    // 打包后代码路径
     cdnHost: 'static-src.4399.cn',  // 静态资源域名
-    assetHost: 'static-src.4399.cn' // 输出静态文件域名
+    assetHost: 'static-src.4399.cn', // 输出静态文件域名
+    dllConfig: {}
 };
 
 const buildConfig = extend(defaultBuildConfig, projectBuildConfig);
-
 
 // buildConfig.htmlWebpackPlugin.forEach((item) => {
 //     item.template =  path.join(__dirname, item.template);

@@ -23,20 +23,20 @@ let basePlugins = [
     new MiniCssExtractPlugin({
         // Options similar to the same options in webpackOptions.output
         // both options are optional
-        filename: buildConfig.outputNamingPattern === 'hash' ? '[name].css' : '[name].css',
+        filename: buildConfig.outputNamingPattern === 'hash' ? '[name]-[hash].css' : '[name].css',
         chunkFilename: "[id].css"
     }),
-    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-    new webpack.DefinePlugin({
-        'process.env': {
-            STATIC_FILES_HOST: '"' + config.paths.staticFilesHost + '"',
-            ASSETS_HOST: '"' + config.paths.assetsHost + '"',
-            ASSETS_RELATIVE_PATH: '"' + config.paths.assetsRelativePath + '"',
-            ASSETS_URL: '"' + config.paths.assetsURLJS + '"',
-            DEPLOY_TAG: '"' + config.deployTag + '"',
-            NODE_ENV: config.isProduction ? '"production"' : '"development"',
-        },
-    }),
+    // new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    // new webpack.DefinePlugin({
+    //     'process.env': {
+    //         STATIC_FILES_HOST: '"' + config.paths.staticFilesHost + '"',
+    //         ASSETS_HOST: '"' + config.paths.assetsHost + '"',
+    //         ASSETS_RELATIVE_PATH: '"' + config.paths.assetsRelativePath + '"',
+    //         ASSETS_URL: '"' + config.paths.assetsURLJS + '"',
+    //         DEPLOY_TAG: '"' + config.deployTag + '"',
+    //         NODE_ENV: config.isProduction ? '"production"' : '"development"',
+    //     },
+    // }),
 ];
 
 if (buildConfig.entry.vendor) {
@@ -63,6 +63,8 @@ if (buildConfig.entry.vendor) {
     // );
 }
 
+basePlugins.push(new DllReferencePlugin())
+
 // 注入多个模版文件
 (buildConfig.htmlWebpackPlugin || []).forEach(html => {
     Object.assign(html, {
@@ -73,7 +75,19 @@ if (buildConfig.entry.vendor) {
     basePlugins.push(new HtmlWebpackPlugin(html));
 });
 
-// basePlugins.push(new HtmlWebpackHarddiskPlugin());
+basePlugins.push(new HtmlWebpackHarddiskPlugin());
+
+let addAssetHtmlPluginOption = {
+    filepath: path.join(__dirname, '/dist/dll/[name].[chunkhash].js'),
+    includeSourcemap: false
+};
+
+basePlugins.push(
+    new webpack.DllReferencePlugin({
+        manifest: require(path.join(__dirname, '/dist/dll/manifest.json')),
+    }),
+    new AddAssetHtmlPlugin()
+);
 
 let babelLoaderOptions = {
     babelrc: false,

@@ -64,6 +64,29 @@ if (argv.d) {
     )
     
     execResult.code && process.exit(1);
+} else if (argv.l) {
+    // 生成 dll 文件
+    let webpackDllEntry;
+    let webpackRelativePath = 'webpack/bin/webpack.js';
+    let webpackDllConfigPath = path.resolve(__dirname, '../build/webpack.dll.config.js');
+    try {
+        webpackDllEntry = require.resolve(path.join(__dirname, '../node_modules/', webpackRelativePath));
+    } catch (e) {
+        console.log(
+            chalk.yellow(
+                '注意: 当前项目用的 infofe-build 可能不是通过 npm 全局安装, 请尽快使用全局安装的方式使用 mfex-build, 方便统一管理!'
+            )
+        );
+        webpackDllEntry = path.join(process.cwd(), '/node_modules/', webpackRelativePath);
+    }
+
+    const execResult = shelljs.exec(
+        `node ${slash(
+            webpackDllEntry
+        )} --progress --config ${slash(webpackDllConfigPath)} --mode production`
+    )
+
+    execResult.code && process.exit(1);
 } else {
     console.log(
         chalk.red(
