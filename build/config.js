@@ -13,14 +13,12 @@ const extend = require('node.extend');
 const readlineSync = require('readline-sync');
 
 const isProduction = process.env.NODE_ENV === 'production';
-console.log( process.env.NODE_ENV)
 const projectPath = process.env.projectPath;
 const srcPath = path.join(projectPath, 'src');
 const defaultStaticPublicProjectPath = path.join(projectPath, 'dist');
 
 // 接收具体项目工程化配置
 const projectBuildConfig = require(path.join(projectPath, 'build.config'));
-console.log(projectBuildConfig.entry)
 let defaultInjectAllTPL = path.join(__dirname, '/tpl/index.tpl');
 let defaultInjectStylesTPL = path.join(__dirname, '/tpl/styles.tpl');
 let defaultInjectScriptsTPL = path.join(__dirname, '/tpl/scripts.tpl');
@@ -36,16 +34,16 @@ let defaultEntry = {
 };
 
 let defaultBuildConfig = {
-    entry: defaultEntry,
-    projectRelativePath: '/projectRelativePath/',
-    outputNamingPattern: 'hash',
-    devServerPort: 'random',
-    enableIPHost: true,
-    sourceMap: false,
-    dropConsole: true,
-    staticPublicProjectPath: defaultStaticPublicProjectPath,
-    cdnHost: 'static-src.4399.cn',
-    assetHost: 'static-src.4399.cn'
+    entry: defaultEntry,    // 配置入口文件
+    projectRelativePath: '/projectRelativePath/',  // 配置项目的相对路径
+    outputNamingPattern: 'hash',    // 输出命名方式
+    devServerPort: 'random',    // 端口号生成方式
+    enableIPHost: true,     // 是否允许通过ip调试
+    sourceMap: false,   // 开启sourcemap
+    dropConsole: true,  // 打包之后是否去掉 console.log
+    staticPublicProjectPath: defaultStaticPublicProjectPath,    // 打包后代码路径
+    cdnHost: 'static-src.4399.cn',  // 静态资源域名
+    assetHost: 'static-src.4399.cn' // 输出静态文件域名
 };
 
 const buildConfig = extend(defaultBuildConfig, projectBuildConfig);

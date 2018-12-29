@@ -36,7 +36,7 @@ if (argv.d) {
         webpackDevServerEntry = path.join(process.cwd(), '/node_modules/', webpackDevServerRelativePath);
     }
     const execResult = shelljs.exec(
-        `node --max_old_space_size=4096 ${slash(webpackDevServerEntry)} --progress --config ${(slash(webpackDevConfigPath))} --host 0.0.0.0`
+        `node --max_old_space_size=4096 ${slash(webpackDevServerEntry)} --progress --config ${(slash(webpackDevConfigPath))} --host 0.0.0.0 --mode development`
     )
     execResult.code && process.exit(1);
 } else if (argv.p) {
