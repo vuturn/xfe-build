@@ -6,6 +6,8 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
+const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
+const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin');
 const extend = require('node.extend');
 const config = require('./config');
 const buildConfig = config.buildConfig;
@@ -63,8 +65,6 @@ if (buildConfig.entry.vendor) {
     // );
 }
 
-basePlugins.push(new DllReferencePlugin())
-
 // 注入多个模版文件
 (buildConfig.htmlWebpackPlugin || []).forEach(html => {
     Object.assign(html, {
@@ -75,19 +75,28 @@ basePlugins.push(new DllReferencePlugin())
     basePlugins.push(new HtmlWebpackPlugin(html));
 });
 
+
+if (buildConfig.dllConfig.isOpenDll) {
+    let HtmlWebpackIncludeAssetsPluginOpt = { 
+        assets: ['/dist/dll/vendor.js'], 
+        hash: false, 
+        append: false
+    }
+    if (buildConfig.dllConfig.injectFiles !== 'all') {
+        HtmlWebpackIncludeAssetsPluginOpt.files = buildConfig.dllConfig.injectFiles
+    }
+    basePlugins.push(
+        new webpack.DllReferencePlugin({
+            manifest: require(path.join(config.paths.projectPath, '/dist/dll/manifest.json')),
+        }),
+        new HtmlWebpackIncludeAssetsPlugin(HtmlWebpackIncludeAssetsPluginOpt)
+        // new AddAssetHtmlPlugin(addAssetHtmlPluginOption)
+    );
+}
+
+
 basePlugins.push(new HtmlWebpackHarddiskPlugin());
 
-let addAssetHtmlPluginOption = {
-    filepath: path.join(__dirname, '/dist/dll/[name].[chunkhash].js'),
-    includeSourcemap: false
-};
-
-basePlugins.push(
-    new webpack.DllReferencePlugin({
-        manifest: require(path.join(__dirname, '/dist/dll/manifest.json')),
-    }),
-    new AddAssetHtmlPlugin()
-);
 
 let babelLoaderOptions = {
     babelrc: false,
@@ -99,7 +108,6 @@ let babelLoaderOptions = {
  * Webpack配置数据
  * @type {Object}
  */
-console.log(config.paths)
 let baseWebpackConfig = {
     // 项目的标识符名称，请使用英文
     name: buildConfig.name || 'build',

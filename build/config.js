@@ -33,6 +33,21 @@ let defaultEntry = {
     vendor: path.join(srcPath, 'js/vendor.js'),
 };
 
+let defaultDllConfig = {
+    output: {
+      path: path.join(projectPath, '/dist/dll'),
+      filename: '[name].js',
+      library: '[name]',
+    },
+    entry: {
+        vendor: [
+            'babel-polyfill',
+        ],
+    },
+    injectFiles: 'all',
+    isOpenDll: false
+  }
+
 let defaultBuildConfig = {
     entry: defaultEntry,    // 配置入口文件
     projectRelativePath: '/projectRelativePath/',  // 配置项目的相对路径
@@ -44,10 +59,12 @@ let defaultBuildConfig = {
     staticPublicProjectPath: defaultStaticPublicProjectPath,    // 打包后代码路径
     cdnHost: 'static-src.4399.cn',  // 静态资源域名
     assetHost: 'static-src.4399.cn', // 输出静态文件域名
-    dllConfig: {}
 };
 
 const buildConfig = extend(defaultBuildConfig, projectBuildConfig);
+
+// dllConfig 是对象
+buildConfig.dllConfig = extend(defaultDllConfig, projectBuildConfig.dllConfig || {})
 
 // buildConfig.htmlWebpackPlugin.forEach((item) => {
 //     item.template =  path.join(__dirname, item.template);
