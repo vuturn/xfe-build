@@ -69,12 +69,12 @@ let buildPlugins = [
 
 if (!process.env.isLib) {
     buildPlugins.push(
-        new CleanWebpackPlugin(['dist/*.*'], {
+        new CleanWebpackPlugin(['dist'], {
             // removes 'dist' folder all files 
             root: config.buildConfig.staticPublicProjectPath || config.paths.projectPath, // 也就是删除此目录下的 dist 文件夹
             verbose: true,
             dry: false,
-            exclude: [],
+            exclude: ['dll'],
         })
     );
 }
