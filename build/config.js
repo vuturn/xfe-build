@@ -57,8 +57,10 @@ let defaultBuildConfig = {
     sourceMap: false,   // 开启sourcemap
     dropConsole: true,  // 打包之后是否去掉 console.log
     staticPublicProjectPath: defaultStaticPublicProjectPath,    // 打包后代码路径
-    cdnHost: 'static-src.4399.cn',  // 静态资源域名
+    cdnHost: '',  // 静态资源域名
     assetHost: 'static-src.4399.cn', // 输出静态文件域名
+    outputCSSPath: '',  // 输出css的文件夹目录
+    outputJSPath: '',   // 输出js的文件夹目录
 };
 
 const buildConfig = extend(defaultBuildConfig, projectBuildConfig);
@@ -143,10 +145,17 @@ if (isProduction) {
     assetsURLJS = assetsURL;
 }
 
+// 如果 cdnHost 配置为不合法值，那么就不需要协议头，表示 host 是由开发者自己在模板做拼接
+if (typeof cdnHost === 'string' && cdnHost.length > 0) {
+    publicPath = '//' + publicPath;
+}
+
 let distName = 'dist';
 let distPath = buildConfig.staticPublicProjectPath ?
     path.join(buildConfig.staticPublicProjectPath, distName) :
     path.join(projectPath, distName);
+
+let jsPath = path.join(distPath, buildConfig.outputJSPath);
 
 exports.paths = {
     projectPath: projectPath,
@@ -157,6 +166,8 @@ exports.paths = {
     src: srcPath,
     dist: distPath,
     publicPath: publicPath,
+    cssPath: buildConfig.outputCSSPath,
+    jsPath: buildConfig.outputJSPath
 };
 
 exports.inject = {

@@ -25,20 +25,20 @@ let basePlugins = [
     new MiniCssExtractPlugin({
         // Options similar to the same options in webpackOptions.output
         // both options are optional
-        filename: buildConfig.outputNamingPattern === 'hash' ? '[name]-[hash].css' : '[name].css',
+        filename: buildConfig.outputNamingPattern === 'hash' ? config.paths.cssPath + '[name]-[chunkhash:8].css' : config.paths.cssPath +  '[name].css',
         chunkFilename: "[id].css"
     }),
-    // new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-    // new webpack.DefinePlugin({
-    //     'process.env': {
-    //         STATIC_FILES_HOST: '"' + config.paths.staticFilesHost + '"',
-    //         ASSETS_HOST: '"' + config.paths.assetsHost + '"',
-    //         ASSETS_RELATIVE_PATH: '"' + config.paths.assetsRelativePath + '"',
-    //         ASSETS_URL: '"' + config.paths.assetsURLJS + '"',
-    //         DEPLOY_TAG: '"' + config.deployTag + '"',
-    //         NODE_ENV: config.isProduction ? '"production"' : '"development"',
-    //     },
-    // }),
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    new webpack.DefinePlugin({
+        'process.env': {
+            STATIC_FILES_HOST: '"' + config.paths.staticFilesHost + '"',
+            ASSETS_HOST: '"' + config.paths.assetsHost + '"',
+            ASSETS_RELATIVE_PATH: '"' + config.paths.assetsRelativePath + '"',
+            ASSETS_URL: '"' + config.paths.assetsURLJS + '"',
+            DEPLOY_TAG: '"' + config.deployTag + '"',
+            NODE_ENV: config.isProduction ? '"production"' : '"development"',
+        },
+    }),
 ];
 
 if (buildConfig.entry.vendor) {
@@ -75,15 +75,18 @@ if (buildConfig.entry.vendor) {
     basePlugins.push(new HtmlWebpackPlugin(html));
 });
 
-
 if (buildConfig.dllConfig.isOpenDll) {
     let HtmlWebpackIncludeAssetsPluginOpt = { 
-        assets: ['/dist/dll/vendor.js'], 
+        assets: ['dist/dll/vendor.js'], 
         hash: false, 
-        append: false
+        append: false,
+        resolvePaths: true
     }
     if (buildConfig.dllConfig.injectFiles !== 'all') {
-        HtmlWebpackIncludeAssetsPluginOpt.files = buildConfig.dllConfig.injectFiles
+        HtmlWebpackIncludeAssetsPluginOpt.files = buildConfig.dllConfig.injectFiles;
+    }
+    if (buildConfig.dllConfig.filepath) {
+        HtmlWebpackIncludeAssetsPluginOpt.publicPath = buildConfig.dllConfig.filepath;
     }
     basePlugins.push(
         new webpack.DllReferencePlugin({
@@ -100,7 +103,7 @@ basePlugins.push(new HtmlWebpackHarddiskPlugin());
 
 let babelLoaderOptions = {
     babelrc: false,
-    presets: [[require.resolve('babel-preset-env'), {modules: false}], require.resolve('babel-preset-stage-2')],
+    presets: [[require.resolve('babel-preset-env'), {modules: false}], require.resolve('babel-preset-stage-2'), require.resolve('babel-preset-react')],
     plugins: [require.resolve('babel-plugin-transform-runtime')],
 };
 
@@ -116,7 +119,7 @@ let baseWebpackConfig = {
     entry: buildConfig.entry,
     output: {
         filename: buildConfig.outputNamingPattern === 'hash' ?
-            '[name]-[' + (config.isProduction ? 'chunkhash' : 'hash') + ':8].js' : '[name].js',
+        config.paths.jsPath + '[name]-[' + (config.isProduction ? 'chunkhash' : 'hash') + ':8].js' : config.paths.jsPath +  '[name].js',
         chunkFilename: 'chunk-[chunkhash:8].js',
         path: config.paths.dist,
         publicPath: config.paths.publicPath,
